@@ -1,0 +1,8 @@
+services:
+  api:
+    build:
+      target: development
+    volumes:
+      - ./services/api:/app
+    environment:
+      - DEPLOY_MODE=local

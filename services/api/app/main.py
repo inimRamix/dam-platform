@@ -20,13 +20,13 @@ async def lifespan(app: FastAPI):
     await db_helper.dispose()
 
 
-app = FastAPI(
+main_app = FastAPI(
     title="DAM API",
     version="0.1.0",
     lifespan=lifespan,
 )
 
 
-@app.get("/health")
+@main_app.get("/health")
 async def health():
     return {"status": "ok"}

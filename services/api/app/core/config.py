@@ -1,11 +1,8 @@
-from pathlib import Path
 from typing import Literal
 
-from pydantic import BaseModel, Field
+from pydantic import BaseModel
 from pydantic.networks import PostgresDsn
 from pydantic_settings import BaseSettings, SettingsConfigDict
-
-BASE_DIR = Path(__file__).resolve().parent.parent.parent
 
 LOG_DEFAULT_FORMAT = (
     "[%(asctime)s.%(msecs)03d] %(module)10s:%(lineno)-3d " "%(levelname)-7s - %(message)s"
@@ -22,7 +19,7 @@ class ApiPrefix(BaseModel):
 
 
 class DatabaseConfig(BaseModel):
-    url: PostgresDsn = Field(alias="DATABASE_URL")
+    url: PostgresDsn
     echo: bool = False
     echo_pool: bool = False
     pool_size: int = 5
@@ -30,17 +27,17 @@ class DatabaseConfig(BaseModel):
 
 
 class JwtConfig(BaseModel):
-    secret_key: str = Field(alias="JWT_SECRET_KEY")
-    algorithm: str = Field(alias="JWT_ALGORITHM")
+    secret_key: str
+    algorithm: str
     access_token_expire_minutes: int = 30
 
 
 class SmtpConfig(BaseModel):
-    host: str = Field(default="mailhog", alias="SMTP_HOST")
-    port: int = Field(default=1025, alias="SMTP_PORT")
-    username: str = Field(alias="SMTP_USERNAME")
-    password: str = Field(alias="SMTP_PASSWORD")
-    from_email: str = Field(alias="SMTP_FROM")
+    host: str
+    port: int
+    username: str
+    password: str
+    from_email: str
 
 
 class LoggingConfig(BaseModel):
@@ -51,14 +48,15 @@ class LoggingConfig(BaseModel):
 class Settings(BaseSettings):
     model_config = SettingsConfigDict(
         case_sensitive=False,
-        populate_by_name=True,
+        env_nested_delimiter="__",
+        env_prefix="APP_CONFIG__",
     )
     api: ApiPrefix = ApiPrefix()
     db: DatabaseConfig
     jwt: JwtConfig
-    smtp: SmtpConfig = SmtpConfig()
+    smtp: SmtpConfig
     logging: LoggingConfig = LoggingConfig()
-    deploy_mode: str = Field(default="production", alias="DEPLOY_MODE")
+    deploy_mode: str = "production"
 
 
 settings = Settings()

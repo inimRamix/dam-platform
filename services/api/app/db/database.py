@@ -10,6 +10,6 @@ db_helper = DatabaseHelper(
 )
 
 
-async def get_db():
-    async for session in db_helper.session_getter():
+async def get_session():
+    async for session in db_helper._session_getter():
         yield session

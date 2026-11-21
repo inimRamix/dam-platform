@@ -2,7 +2,7 @@ from typing import Optional, Literal
 
 from pydantic import BaseModel, EmailStr
 
-from app.models.user import UserRole
+from app.schemas.validators import Password
 
 
 class InviteUserRequest(BaseModel):
@@ -11,7 +11,11 @@ class InviteUserRequest(BaseModel):
 
 
 class ActivateUserRequest(BaseModel):
-    token: str
-    password: str
+    password: Password
     first_name: str
     last_name: str
+
+
+class InviteResponse(BaseModel):
+    message: str
+    email: EmailStr

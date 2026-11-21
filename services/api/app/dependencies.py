@@ -1,3 +1,4 @@
+import uuid
 from typing import Annotated
 
 from fastapi import Depends, HTTPException, status
@@ -26,11 +27,19 @@ async def get_current_user(
     payload = decode_access_token(token)
     if payload is None:
         raise invalid_token_exc
+
     user_id = payload.get("sub")
     if user_id is None:
         raise invalid_token_exc
 
-    result = await session.execute(select(User).where(User.id == user_id))
+    try:
+        user_id = uuid.UUID(str(user_id))
+    except (ValueError, TypeError):
+        raise invalid_token_exc
+
+    result = await session.execute(
+        select(User).where(User.id == user_id).limit(1)
+    )
     user = result.scalar_one_or_none()
     if user is None or not user.is_active:
         raise HTTPException(

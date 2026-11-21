@@ -9,14 +9,16 @@ from app.core.security import create_access_token, verify_password
 from app.db.database import get_session
 from app.dependencies import get_current_user
 from app.models.user import User
-from app.schemas.auth import LoginRequest, TokenResponse, UserRead
+from app.schemas.auth import LoginRequest, TokenResponse, UserMeRead
 
 router = APIRouter(prefix=settings.api.v1.auth, tags=["Auth"])
 
 
 @router.post("/login", response_model=TokenResponse, status_code=status.HTTP_200_OK)
 async def login(data: LoginRequest, session: Annotated[AsyncSession, Depends(get_session)]):
-    result = await session.execute(select(User).where(User.email == data.email))
+    result = await session.execute(
+        select(User).where(User.email == data.email).limit(1)
+    )
     user = result.scalar_one_or_none()
     if not user or not verify_password(data.password, user.hashed_password) or not user.is_active:
         raise HTTPException(
@@ -27,6 +29,6 @@ async def login(data: LoginRequest, session: Annotated[AsyncSession, Depends(get
     return TokenResponse(access_token=access_token)
 
 
-@router.get("/me", response_model=UserRead, status_code=status.HTTP_200_OK)
+@router.get("/me", response_model=UserMeRead, status_code=status.HTTP_200_OK)
 async def get_me(current_user: Annotated[User, Depends(get_current_user)]):
     return current_user

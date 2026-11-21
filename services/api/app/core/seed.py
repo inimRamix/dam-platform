@@ -24,6 +24,23 @@ async def run_seed():
             logger.info("Администратор уже существует. Пропускаем генерацию токена.")
             return
 
+        existing = await session.execute(
+            select(AdminActivationToken)
+            .where(
+                AdminActivationToken.used.is_(False),
+                AdminActivationToken.expires_at > datetime.now(timezone.utc),
+            )
+            .order_by(AdminActivationToken.created_at.desc())
+            .limit(1)
+        )
+        token_entry = existing.scalar_one_or_none()
+        if token_entry:
+            activation_url = build_admin_activation_url(token_entry.token)
+            logger.info(
+                "Используем существующий токен активации: %s", activation_url
+            )
+            return
+
         token = secrets.token_urlsafe(32)
         expires_at = datetime.now(timezone.utc) + timedelta(
             minutes=settings.admin_token_expire_minutes

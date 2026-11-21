@@ -1,7 +1,7 @@
 from datetime import datetime, timezone
 from typing import Annotated
 
-from fastapi import APIRouter, Body, Depends, HTTPException, Query, status
+from fastapi import APIRouter, Depends, HTTPException, Query, status
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
@@ -18,21 +18,29 @@ router = APIRouter(prefix=settings.api.v1.admin, tags=["Admin"])
 
 @router.post("/activate", response_model=TokenResponse, status_code=status.HTTP_201_CREATED)
 async def activate_admin(
+    data: AdminActivateRequest,
+    session: Annotated[AsyncSession, Depends(get_session)],
     token: str = Query(..., description="Токен активации из ссылки"),
-    data: AdminActivateRequest = Body(...),
-    session: AsyncSession = Depends(get_session),
-    # session: Annotated[AsyncSession, Depends(get_session)]
 ):
-    existing = await session.execute(select(User).where(User.role == UserRole.ADMIN))
-    if existing.scalar_one_or_none():
+    existing_admin = await session.execute(select(User).where(User.role == UserRole.ADMIN))
+    if existing_admin.scalar_one_or_none():
         raise HTTPException(
             status_code=status.HTTP_403_FORBIDDEN, detail="Администратор уже существует"
         )
 
-    token_entry = await session.execute(
+    existing_email = await session.execute(
+        select(User).where(User.email == data.email).limit(1)
+    )
+    if existing_email.scalar_one_or_none():
+        raise HTTPException(
+            status_code=status.HTTP_409_CONFLICT,
+            detail="Пользователь с таким email уже существует",
+        )
+
+    token_result = await session.execute(
         select(AdminActivationToken).where(AdminActivationToken.token == token)
     )
-    token_entry = token_entry.scalar_one_or_none()
+    token_entry = token_result.scalar_one_or_none()
     if not token_entry or token_entry.used or token_entry.expires_at < datetime.now(timezone.utc):
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST, detail="Недействительный токен"

@@ -1,7 +1,6 @@
-from datetime import datetime
 from uuid import UUID
 
-from pydantic import BaseModel, EmailStr
+from pydantic import BaseModel, ConfigDict, EmailStr
 
 from app.models.user import UserRole
 
@@ -16,14 +15,11 @@ class TokenResponse(BaseModel):
     token_type: str = "bearer"
 
 
-class UserRead(BaseModel):
+class UserMeRead(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
+
     id: UUID
     first_name: str
     last_name: str
     email: EmailStr
     role: UserRole
-    is_active: bool
-    created_at: datetime
-
-    class Config:
-        from_attributes = True

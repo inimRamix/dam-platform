@@ -4,7 +4,9 @@ from contextlib import asynccontextmanager
 from fastapi import FastAPI
 
 from app.core.config import settings
-from app.db.database import db_helper
+from app.core.seed import run_seed
+from app.db.database import dispose_engine
+from app.routers import router as api_router
 
 logging.basicConfig(
     level=settings.logging.level,
@@ -14,16 +16,20 @@ logging.basicConfig(
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    # startapp
+    await run_seed()
     yield
-    # shutdown
-    await db_helper.dispose()
+    await dispose_engine()
 
 
 main_app = FastAPI(
     title="DAM API",
     version="0.1.0",
     lifespan=lifespan,
+)
+
+
+main_app.include_router(
+    api_router,
 )
 
 

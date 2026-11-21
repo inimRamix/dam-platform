@@ -11,6 +11,9 @@ LOG_DEFAULT_FORMAT = (
 
 class ApiV1Prefix(BaseModel):
     prefix: str = "/v1"
+    admin: str = "/admin"
+    auth: str = "/auth"
+    users: str = "/users"
 
 
 class ApiPrefix(BaseModel):
@@ -65,6 +68,9 @@ class Settings(BaseSettings):
     smtp: SmtpConfig
     logging: LoggingConfig = LoggingConfig()
     deploy_mode: str = "production"
+    app_base_url: str = "http://localhost:8000"
+    admin_token_expire_minutes: int = 60
+    invitation_expire_minutes: int = 120
 
 
 settings = Settings()

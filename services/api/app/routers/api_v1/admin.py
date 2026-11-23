@@ -47,8 +47,6 @@ async def activate_admin(
         )
 
     user = User(
-        first_name=data.first_name,
-        last_name=data.last_name,
         email=data.email,
         hashed_password=hash_password(data.password),
         role=UserRole.ADMIN,

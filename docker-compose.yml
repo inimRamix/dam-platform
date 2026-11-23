@@ -24,6 +24,17 @@ services:
       - clickhouse
     restart: unless-stopped
 
+  frontend:
+    build:
+      context: ./services/frontend
+      dockerfile: Dockerfile
+      target: production
+    image: dam-frontend:latest
+    container_name: dam-frontend
+    depends_on:
+      - api
+    restart: unless-stopped
+
   postgres:
     image: postgres:16-alpine
     container_name: dam-postgres

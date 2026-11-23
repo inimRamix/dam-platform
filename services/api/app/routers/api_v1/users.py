@@ -95,8 +95,6 @@ async def activate_user(
         )
 
     user = User(
-        first_name=data.first_name,
-        last_name=data.last_name,
         email=invite.email,
         hashed_password=hash_password(data.password),
         role=invite.role,

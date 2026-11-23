@@ -12,8 +12,6 @@ class InviteUserRequest(BaseModel):
 
 class ActivateUserRequest(BaseModel):
     password: Password
-    first_name: str
-    last_name: str
 
 
 class InviteResponse(BaseModel):

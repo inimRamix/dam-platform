@@ -71,7 +71,7 @@ class Settings(BaseSettings):
     app_base_url: str = "http://localhost:8000"
     admin_token_expire_minutes: int = 60
     invitation_expire_minutes: int = 120
-    cors_origins: list[str] = ["http://localhost:5173"]
+    # cors_origins: list[str] = ["http://localhost:5173"]
 
 
 settings = Settings()

@@ -1,0 +1,19 @@
+services:
+  api:
+    build:
+      target: development
+    volumes:
+      - ./services/api:/app
+    environment:
+      - DEPLOY_MODE=local
+
+  frontend:
+    build:
+      target: development
+    volumes:
+      - ./services/frontend:/app
+      - /app/node_modules
+    environment:
+      VITE_API_PROXY_TARGET: http://api:8000
+    ports:
+      - "5173:5173"

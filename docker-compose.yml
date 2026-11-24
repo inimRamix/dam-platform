@@ -5,6 +5,36 @@ volumes:
   clickhouse_data:
 
 services:
+  api:
+    build:
+      context: ./services/api
+      dockerfile: Dockerfile
+    image: dam-api:latest
+    container_name: dam-api
+    env_file:
+      - .env
+    ports:
+      - "8000:8000"
+    depends_on:
+      - postgres
+      - redis
+      - rabbitmq
+      - minio
+      - elasticsearch
+      - clickhouse
+    restart: unless-stopped
+
+  frontend:
+    build:
+      context: ./services/frontend
+      dockerfile: Dockerfile
+      target: production
+    image: dam-frontend:latest
+    container_name: dam-frontend
+    depends_on:
+      - api
+    restart: unless-stopped
+
   postgres:
     image: postgres:16-alpine
     container_name: dam-postgres
@@ -38,6 +68,14 @@ services:
     environment:
       RABBITMQ_DEFAULT_USER: ${RABBITMQ_DEFAULT_USER}
       RABBITMQ_DEFAULT_PASS: ${RABBITMQ_DEFAULT_PASS}
+    restart: unless-stopped
+
+  mailhog:
+    image: mailhog/mailhog:latest
+    container_name: dam-mailhog
+    ports:
+      - "1025:1025"
+      -  "8025:8025"
     restart: unless-stopped
 
   minio:

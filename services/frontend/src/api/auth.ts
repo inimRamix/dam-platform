@@ -4,14 +4,10 @@ import type { LoginRequest, TokenResponse, UserMe } from "@/types/auth";
 export interface AdminActivateRequest {
   email: string;
   password: string;
-  first_name: string;
-  last_name: string;
 }
 
 export interface ActivateUserRequest {
   password: string;
-  first_name: string;
-  last_name: string;
 }
 
 export interface InviteUserRequest {

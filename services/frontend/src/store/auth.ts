@@ -17,7 +17,7 @@ interface AuthState {
 export const useAuthStore = create<AuthState>((set) => ({
   token: localStorage.getItem(TOKEN_KEY),
   user: null,
-  loading: false,
+  loading: !!localStorage.getItem(TOKEN_KEY),
 
   login: async (data) => {
     const { access_token } = await authApi.login(data);

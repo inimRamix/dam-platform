@@ -10,8 +10,8 @@ export default function DashboardPage() {
   const token = useAuthStore((s) => s.token);
   const user = useAuthStore((s) => s.user);
   const logout = useAuthStore((s) => s.logout);
-  const displayName =
-    user && user.first_name?.trim() ? user.first_name : null;
+
+  const displayName = user?.first_name?.trim() ? user.first_name : null;
 
   if (!token) return <Navigate to="/login" replace />;
 
@@ -19,12 +19,20 @@ export default function DashboardPage() {
     <div style={{ padding: 24 }}>
       <Card>
         <Title level={3}>
-            {displayName
-                ? `Добро пожаловать, ${displayName}!`
-                : "Добро пожаловать!"}
+          {displayName
+            ? `Добро пожаловать, ${displayName}!`
+            : "Добро пожаловать!"}
         </Title>
         <Text type="secondary">Роль: {user?.role ?? "…"}</Text>
-        <div style={{ marginTop: 16 }}>
+        <div style={{ marginTop: 16, display: "flex", gap: 8 }}>
+          {user?.role === "admin" && (
+            <Button
+              type="primary"
+              onClick={() => navigate("/users/invite")}
+            >
+              Пригласить пользователя
+            </Button>
+          )}
           <Button
             onClick={() => {
               logout();

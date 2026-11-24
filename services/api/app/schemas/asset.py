@@ -51,3 +51,13 @@ class AssetRead(BaseModel):
     tags: list[TagRead] = Field(default_factory=list)
     created_at: datetime
     updated_at: datetime
+
+class AssetDetailRead(AssetRead):
+    versions: list[AssetVersionRead] = Field(default_factory=list)
+
+
+class AssetListResponse(BaseModel):
+    items: list[AssetRead]
+    total: int
+    page: int
+    page_size: int

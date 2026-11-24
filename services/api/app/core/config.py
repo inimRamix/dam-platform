@@ -14,6 +14,7 @@ class ApiV1Prefix(BaseModel):
     admin: str = "/admin"
     auth: str = "/auth"
     users: str = "/users"
+    assets: str = "/assets"
 
 
 class ApiPrefix(BaseModel):
@@ -56,6 +57,15 @@ class LoggingConfig(BaseModel):
     format: str = LOG_DEFAULT_FORMAT
 
 
+class S3Config(BaseModel):
+    endpoint_url: str = "http://minio:9000"
+    access_key: str
+    secret_key: str
+    bucket: str = "dam-assets"
+    region: str = "us-east-1"
+    presigned_url_expire_seconds: int = 3600
+
+
 class Settings(BaseSettings):
     model_config = SettingsConfigDict(
         case_sensitive=False,
@@ -67,10 +77,12 @@ class Settings(BaseSettings):
     jwt: JwtConfig
     smtp: SmtpConfig
     logging: LoggingConfig = LoggingConfig()
+    s3: S3Config
     deploy_mode: str = "production"
     app_base_url: str = "http://localhost:5173"
     admin_token_expire_minutes: int = 60
     invitation_expire_minutes: int = 120
+    max_file_size_bytes: int = 200 * 1024 * 1024
 
 
 settings = Settings()

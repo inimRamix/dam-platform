@@ -11,3 +11,5 @@ python-multipart>=0.0.32,<1.0.0
 aiosmtplib>=5.1.2,<6.0.0
 python-dotenv>=1.2.2,<2.0.0
 email-validator>=2.0.0,<3.0.0
+aioboto3>=13.0.0,<15.0.0
+python-magic>=0.4.27,<1.0.0

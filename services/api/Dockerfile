@@ -5,6 +5,7 @@ WORKDIR /app
 RUN apt-get update && apt-get install -y --no-install-recommends \
     build-essential \
     libpq-dev \
+    libmagic1 \
     && rm -rf /var/lib/apt/lists/*
 
 COPY requirements.txt requirements-dev.txt ./
@@ -19,6 +20,10 @@ WORKDIR /app
 COPY --from=builder /app/wheels-all /wheels
 RUN pip install --no-cache-dir /wheels/* && rm -rf /wheels
 
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    libmagic1 \
+    && rm -rf /var/lib/apt/lists/*
+
 COPY . .
 
 ENV PYTHONUNBUFFERED=1
@@ -31,6 +36,10 @@ WORKDIR /app
 
 COPY --from=builder /app/wheels-prod /wheels
 RUN pip install --no-cache-dir /wheels/* && rm -rf /wheels
+
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    libmagic1 \
+    && rm -rf /var/lib/apt/lists/*
 
 COPY . .
 

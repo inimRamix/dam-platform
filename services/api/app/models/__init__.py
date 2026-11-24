@@ -1,9 +1,20 @@
 from .admin_activation_token import AdminActivationToken
-from .user import User
+from .asset import Asset, AssetType, AssetVersion, ProcessingStatus
+from .collection import Collection
+from .tag import Tag, asset_tags
+from .user import User, UserRole
 from .user_invitation import UserInvitation
 
 __all__ = [
-    "User",
     "AdminActivationToken",
+    "Asset",
+    "AssetType",
+    "AssetVersion",
+    "Collection",
+    "ProcessingStatus",
+    "Tag",
+    "User",
     "UserInvitation",
+    "UserRole",
+    "asset_tags",
 ]
